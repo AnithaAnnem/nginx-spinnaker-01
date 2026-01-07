@@ -1,1 +1,1 @@
-# nginx-spinnaker-01
+# nginx-spinnaker
