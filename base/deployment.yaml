@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ${parameters.app}
-  namespace: ${parameters.Namespace}
+  namespace: ${parameters.namespace}
   labels:
     app: ${parameters.app}
 spec:
-  replicas: ${parameters.Replicas}
+  replicas: ${parameters.replicas}
   selector:
     matchLabels:
       app: ${parameters.app}
@@ -17,10 +17,10 @@ spec:
     spec:
       containers:
         - name: ${parameters.app}
-          image: ${parameters.Image}
+          image: ${parameters.image}
           resources:
             requests:
-              cpu: ${parameters.CPU}
-              memory: ${parameters.Memory}
+              cpu: ${parameters.cpu}
+              memory: ${parameters.memory}
           ports:
             - containerPort: 80
