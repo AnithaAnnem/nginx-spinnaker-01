@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${app}
-  namespace: ${namespace}
+  name: ${parameters.app}
+  namespace: ${parameters.Namespace}
   labels:
-    app: ${app}
+    app: ${parameters.app}
 spec:
-  replicas: ${replicas}
+  replicas: ${parameters.Replicas}
   selector:
     matchLabels:
-      app: ${app}
+      app: ${parameters.app}
   template:
     metadata:
       labels:
-        app: ${app}
+        app: ${parameters.app}
     spec:
       containers:
-      - name: ${app}
-        image: ${image}
-        resources:
-          requests:
-            cpu: ${cpu}
-            memory: ${memory}
-        ports:
-        - containerPort: 80
+        - name: ${parameters.app}
+          image: ${parameters.Image}
+          resources:
+            requests:
+              cpu: ${parameters.CPU}
+              memory: ${parameters.Memory}
+          ports:
+            - containerPort: 80
