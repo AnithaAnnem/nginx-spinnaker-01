@@ -4,8 +4,8 @@ kind: Kustomization
 resources:
   - ../../base
 
-configMapGenerator:
-  - name: app-params
-    files:
-      - parameter.yml
+#configMapGenerator:
+ # - name: app-params
+  #  files:
+   #   - parameter.yml
 
