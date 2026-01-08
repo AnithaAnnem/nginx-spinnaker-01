@@ -1,5 +1,5 @@
 app: nginx
-namespace: dev
+namespace: prod
 replicas: 1
 cpu: "250m"
 memory: "128Mi"
