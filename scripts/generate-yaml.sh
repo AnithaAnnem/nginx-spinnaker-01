@@ -1,40 +1,31 @@
 #!/bin/bash
 set -e
 
-# Paths
+echo "Installing tools..."
+apk add --no-cache yq gettext
+
 PARAM_FILE="overlay/dev/parameter.yml"
-BASE_DEPLOYMENT="base/deployment.yaml"
-BASE_SERVICE="base/service.yaml"
-
 OUTPUT_DIR="/tmp/generated"
-mkdir -p $OUTPUT_DIR
 
-# Read parameters using yq
-APP=$(yq e '.app' $PARAM_FILE)
-NAMESPACE=$(yq e '.namespace' $PARAM_FILE)
-REPLICAS=$(yq e '.replicas' $PARAM_FILE)
-IMAGE=$(yq e '.image' $PARAM_FILE)
-CPU=$(yq e '.cpu' $PARAM_FILE)
-MEMORY=$(yq e '.memory' $PARAM_FILE)
+mkdir -p "$OUTPUT_DIR"
 
-# Replace placeholders in deployment.yaml
-envsubst < $BASE_DEPLOYMENT > $OUTPUT_DIR/deployment.yaml
-envsubst < $BASE_SERVICE > $OUTPUT_DIR/service.yaml
+echo "Loading parameters..."
 
-# Overwrite placeholders dynamically using env variables
-export parameters_app=$APP
-export parameters_namespace=$NAMESPACE
-export parameters_replicas=$REPLICAS
-export parameters_image=$IMAGE
-export parameters_cpu=$CPU
-export parameters_memory=$MEMORY
+export APP_NAME=$(yq e '.app' "$PARAM_FILE")
+export NAMESPACE=$(yq e '.namespace' "$PARAM_FILE")
+export REPLICAS=$(yq e '.replicas' "$PARAM_FILE")
+export IMAGE=$(yq e '.image' "$PARAM_FILE")
+export CPU=$(yq e '.cpu' "$PARAM_FILE")
+export MEMORY=$(yq e '.memory' "$PARAM_FILE")
 
-# Run envsubst on both files
-envsubst '${parameters_app} ${parameters_namespace} ${parameters_replicas} ${parameters_image} ${parameters_cpu} ${parameters_memory}' \
-  < $BASE_DEPLOYMENT > $OUTPUT_DIR/deployment.yaml
+echo "Generating deployment.yaml..."
+envsubst < base/deployment.yaml > "$OUTPUT_DIR/deployment.yaml"
 
-envsubst '${parameters_app} ${parameters_namespace}' \
-  < $BASE_SERVICE > $OUTPUT_DIR/service.yaml
+echo "Generating service.yaml..."
+envsubst < base/service.yaml > "$OUTPUT_DIR/service.yaml"
 
-echo "Generated YAML in $OUTPUT_DIR"
-ls -l $OUTPUT_DIR
+echo "Generated manifests:"
+ls -l "$OUTPUT_DIR"
+
+echo "Deployment YAML:"
+cat "$OUTPUT_DIR/deployment.yaml"
