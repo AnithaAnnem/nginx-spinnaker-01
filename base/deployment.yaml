@@ -26,26 +26,48 @@
 #             - containerPort: 80
 
 
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: nginx
+#   labels:
+#     app: nginx
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: nginx
+#   template:
+#     metadata:
+#       labels:
+#         app: nginx
+#     spec:
+#       containers:
+#         - name: nginx
+#           image: nginx:latest
+#           ports:
+#             - containerPort: 80
+#           resources: {}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
-  labels:
-    app: nginx
+  name: ${parameters_app}
+  namespace: ${parameters_namespace}
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
+  replicas: ${parameters_replicas}
   template:
     metadata:
       labels:
-        app: nginx
+        app: ${parameters_app}
     spec:
       containers:
-        - name: nginx
-          image: nginx:latest
+        - name: ${parameters_app}
+          image: ${parameters_image}
+          resources:
+            requests:
+              cpu: ${parameters_cpu}
+              memory: ${parameters_memory}
           ports:
             - containerPort: 80
-          resources: {}
 
