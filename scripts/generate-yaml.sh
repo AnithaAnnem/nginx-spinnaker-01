@@ -39,22 +39,29 @@
 # echo "Deployment YAML:"
 # cat "$OUTPUT_DIR/deployment.yaml"
 
-#!/bin/bash
+#!/bin/sh
 set -e
 
-echo "Generating manifests using pipeline parameters"
+ENV="dev"   # hardcode for now (we’ll parameterize later)
 
-OUT_DIR="generated/${ENV}"
-mkdir -p ${OUT_DIR}
+PARAM_FILE="overlay/${ENV}/parameter.yml"
+OUTPUT_DIR="/tmp/generated"
 
-envsubst < base/deployment.yaml > ${OUT_DIR}/deployment.yaml
-envsubst < base/service.yaml > ${OUT_DIR}/service.yaml
+mkdir -p "$OUTPUT_DIR"
 
-cat <<EOF > ${OUT_DIR}/kustomization.yaml
-resources:
-- deployment.yaml
-- service.yaml
-EOF
+echo "Reading parameters from $PARAM_FILE"
+
+APP_NAME=$(yq e '.app' "$PARAM_FILE")
+NAMESPACE=$(yq e '.namespace' "$PARAM_FILE")
+REPLICAS=$(yq e '.replicas' "$PARAM_FILE")
+IMAGE=$(yq e '.image' "$PARAM_FILE")
+CPU=$(yq e '.cpu' "$PARAM_FILE")
+MEMORY=$(yq e '.memory' "$PARAM_FILE")
+
+export APP_NAME NAMESPACE REPLICAS IMAGE CPU MEMORY
+
+envsubst < base/deployment.yaml > "$OUTPUT_DIR/deployment.yaml"
+envsubst < base/service.yaml > "$OUTPUT_DIR/service.yaml"
 
 echo "Generated files:"
-ls -l ${OUT_DIR}
+ls -l "$OUTPUT_DIR"
