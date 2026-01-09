@@ -4,12 +4,21 @@ set -e
 echo "Installing tools..."
 apk add --no-cache yq gettext
 
-PARAM_FILE="overlay/dev/parameter.yml"
+ENV="${ENV_PARAM}"
+
+if [ -z "$ENV" ]; then
+  echo "ERROR: ENV_PARAM is not set"
+  exit 1
+fi
+
+echo "Running for environment: $ENV"
+
+PARAM_FILE="overlay/${ENV}/parameter.yml"
 OUTPUT_DIR="/tmp/generated"
 
 mkdir -p "$OUTPUT_DIR"
 
-echo "Loading parameters..."
+echo "Loading parameters from $PARAM_FILE"
 
 export APP_NAME=$(yq e '.app' "$PARAM_FILE")
 export NAMESPACE=$(yq e '.namespace' "$PARAM_FILE")
